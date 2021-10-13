@@ -1,0 +1,40 @@
+{
+    "name": "the_alex_mark/laravel-settings",
+    "version": "1.0",
+    "description": "Реализует систему хранения перезаписываемых настроек в формате «YAML».",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Макаров Александр",
+            "email": "the_alex_mark@mail.ru",
+            "homepage": "https://the-alex-mark.ru"
+        }
+    ],
+    "keywords": [ "laravel", "settings", "yaml" ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.1",
+        "symfony/yaml": "^5.2"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.21"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "ProgLib\\Settings\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ProgLib\\Settings\\Providers\\SettingsServiceProvider"
+            ],
+            "aliases": {
+                "Settings": "ProgLib\\Settings\\Facades\\Settings"
+            }
+        }
+    }
+}
