@@ -39,12 +39,9 @@ class Repository extends ConfigRepository {
      * @return array
      */
     private function load() {
-        $path = storage_path('settings/');
-
-        // Кеширование настроек
-        return Cache::remember($this->cache_key, Cache::get('cache.ttl', 600), function () use ($path) {
+        return Cache::remember($this->cache_key, Cache::get('cache.ttl', 600), function () {
             $item = [];
-            foreach (glob($path . '*.yml') as $file) {
+            foreach (glob(settings_path('*.yml')) as $file) {
                 if (is_readable($file)) {
                     $filename = pathinfo($file, PATHINFO_FILENAME);
                     $item[$filename] = Yaml::parseFile($file, Yaml::PARSE_OBJECT);
@@ -78,7 +75,7 @@ class Repository extends ConfigRepository {
         if (!empty($filename)) {
             $yaml = Yaml::dump($this->get($filename), 10, 4, Yaml::DUMP_OBJECT);
             $filename = $filename . '.yml';
-            file_put_contents(storage_path('settings/' . $filename), $yaml,  LOCK_EX);
+            file_put_contents(settings_path($filename), $yaml,  LOCK_EX);
 
             // Кеширование актуальных данных
             Cache::put($this->cache_key, $this->items, config('cache.ttl', 600));

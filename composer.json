@@ -1,6 +1,6 @@
 {
     "name": "the_alex_mark/laravel-settings",
-    "version": "1.0",
+    "version": "1.1",
     "description": "Реализует систему хранения перезаписываемых настроек в формате «YAML».",
     "license": "MIT",
     "authors": [

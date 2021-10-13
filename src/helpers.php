@@ -1,5 +1,18 @@
 <?php
 
+if (!function_exists('settings_path')) {
+
+    /**
+     * Возвращает расположение файлов настроек.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function settings_path($path = '') {
+        return app('path.settings') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+}
+
 if (!function_exists('settings')) {
 
     /**
