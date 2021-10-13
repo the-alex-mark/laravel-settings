@@ -17,8 +17,6 @@ class Repository extends ConfigRepository {
      * @return void
      */
     public function __construct() {
-
-        // Выполнение исходного метода
         parent::__construct($this->load());
     }
 
@@ -29,26 +27,28 @@ class Repository extends ConfigRepository {
      *
      * @var string
      */
-    private $cache_key = 'the_alex_mark::settings';
+    private static $cache_key = 'the_alex_mark::settings';
 
     #endregion
+
+    #region Customs
 
     /**
      * Загружает настройки из соответствующей директории.
      *
      * @return array
      */
-    private function load() {
-        return Cache::remember($this->cache_key, Cache::get('cache.ttl', 600), function () {
-            $item = [];
+    public static function load() {
+        return Cache::remember(self::$cache_key, Cache::get('cache.ttl', 600), function () {
+            $settings = [];
             foreach (glob(settings_path('*.yml')) as $file) {
                 if (is_readable($file)) {
                     $filename = pathinfo($file, PATHINFO_FILENAME);
-                    $item[$filename] = Yaml::parseFile($file, Yaml::PARSE_OBJECT);
+                    $settings[$filename] = Yaml::parseFile($file, Yaml::PARSE_OBJECT);
                 }
             }
 
-            return $item;
+            return $settings;
         });
     }
 
@@ -58,11 +58,23 @@ class Repository extends ConfigRepository {
      * @return void
      */
     public function reload() {
-        Cache::forget($this->cache_key);
-
-        // Выполнение исходного метода
-        parent::__construct($this->load());
+        $this->clear();
+        $this->__construct();
     }
+
+    /**
+     * Выполняет очистку кешированных данных.
+     *
+     * @return bool
+     */
+    public static function clear() {
+        if (Cache::has(self::$cache_key))
+            return Cache::forget(self::$cache_key);
+
+        return true;
+    }
+
+    #endregion
 
     public function set($key, $value = null) {
 
@@ -78,7 +90,7 @@ class Repository extends ConfigRepository {
             file_put_contents(settings_path($filename), $yaml,  LOCK_EX);
 
             // Кеширование актуальных данных
-            Cache::put($this->cache_key, $this->items, config('cache.ttl', 600));
+            Cache::put(self::$cache_key, $this->items, config('cache.ttl', 600));
         }
     }
 }
